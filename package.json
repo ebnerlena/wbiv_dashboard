@@ -13,12 +13,17 @@
     "start:docker": "npm run build:docker && docker run -p 3000:3000 wbiv-dashboard"
   },
   "dependencies": {
+    "papaparse": "^5.3.2",
+    "plotly.js": "^2.16.5",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-plotly.js": "^2.6.0"
   },
   "devDependencies": {
+    "@types/papaparse": "^5.3.5",
     "@types/react": "^18.0.26",
     "@types/react-dom": "^18.0.9",
+    "@types/react-plotly.js": "^2.5.2",
     "@vitejs/plugin-react": "^3.0.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-react": "^7.31.11",
