@@ -30,3 +30,8 @@ wer ist meine Zielgruppe? Experten? General Public - jeder
 ### Provide Context
 
 ### Make It Actionable
+
+## References
+
+- https://github.com/plotly/react-plotly.js/
+- https://plotly.com/javascript/configuration-options/
