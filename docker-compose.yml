@@ -1,0 +1,17 @@
+version: '3.9'
+networks:
+  wbiv-dashboard:
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        - PORT=$FRONTEND_PORT
+    image: bookommender-f:latest
+    volumes:
+      - ./frontend/:/app/src
+    ports:
+      - '${FRONTEND_PORT}:${FRONTEND_PORT}'
+    networks:
+      - wbiv-dashboard
