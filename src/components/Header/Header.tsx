@@ -34,7 +34,12 @@ function Header() {
     <header className="header">
       <div className="header__left">
         <img src="/solar-panels.png" className="header__icon" />
-        <h1 className="header__title">Solar Engery</h1>
+        <div className="header__text-wrapper">
+          <h1 className="header__title">Solar Engery</h1>
+          <p className="header__subtitle">
+            PV Energy Production Capacity in Austria 1980 - 2019
+          </p>
+        </div>
       </div>
       <div className="header__right">
         {weather?.icon && (
