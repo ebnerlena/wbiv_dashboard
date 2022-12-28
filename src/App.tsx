@@ -2,6 +2,7 @@ import { useState } from 'react'
 import './App.css'
 import BoxPlot from './components/BoxPlot/BoxPlot'
 import Header from './components/Header/Header'
+import HeatMap from './components/HeatMap/HeatMap'
 import LineChart from './components/LineChart/LineChart'
 
 function App() {
@@ -13,6 +14,7 @@ function App() {
       <main className="content">
         <div className="content__top">
           <LineChart id="pv-daily" year={year} />
+          <HeatMap id="pv-yearly" year={year} />
         </div>
         <div className="content__bottom">
           {/* <BarChart id="pv-yearly" /> */}
