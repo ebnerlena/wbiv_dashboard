@@ -4,24 +4,10 @@
   justify-content: flex-start;
   min-height: 100vh;
   height: 100vh;
-  background-color: gainsboro;
+  background-color: #353535;
 }
 
-.header {
-  background-color: antiquewhite;
-  width: 100vw;
-  height: 60px;
-  color: white;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: row;
-  place-items: center;
-}
-
-.header__title {
-  padding-left: 1rem;
-}
+/* blue: #96deff*/
 
 .content {
   display: flex;
@@ -29,6 +15,7 @@
   padding: 1rem;
   gap: 1rem;
   height: 100%;
+  padding-top: 2rem;
 }
 
 .content__top {
@@ -47,8 +34,13 @@
 }
 
 .footer {
-  padding: 1rem;
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  padding-top: 1rem;
+  padding-left: 0.8rem;
+  padding-right: 0.8rem;
+  padding-bottom: 0.5rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  color: whitesmoke;
+  font-size: 0.8rem;
 }
