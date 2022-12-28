@@ -124,7 +124,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
               l: 80,
               r: 80,
               b: 30,
-              t: 50,
+              t: 60,
             },
 
             showlegend: false,

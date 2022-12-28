@@ -9,16 +9,16 @@ type LineChartProps = {
 }
 
 type DataMapping = {
-  date: Date
   x: number[]
   y: number[]
+  type: string
+  mode: string
+  marker: { color: string }
+  name: string
 }
 
 const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
-  const [dataMappingYear, setDataMappingYear] = useState<DataMapping | null>(
-    null
-  )
-  const [dataMapping, setDataMapping] = useState<DataMapping | null>(null)
+  const [dataMapping, setDataMapping] = useState<DataMapping[]>([])
   const [data, setData] = useState<any>()
 
   useEffect(() => {
@@ -35,83 +35,96 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
           console.log('Error parsing pv csv data: ', errors)
           return
         }
-        setData(data)
+        setData(data.slice(3))
         updateYearData(data)
       },
     })
   }
 
   useEffect(() => {
-    if (data && data != undefined) updateYearData(data)
+    if (data && data != undefined) {
+      updateYearData(data)
+    }
   }, [year])
 
   const updateYearData = (data: any) => {
     const myYear = year
 
     let i = 0
-    let j = 0
-    let medianXDaily: number[] = []
-    let xDailyForYear: number[] = []
-    let yDailyForYear: number[] = []
-
     let xDaily: number[] = []
     let yDaily: number[] = []
+    let xDailyForYear: number[] = []
+    let xMaxDailyForYear: number[] = []
+    let yDailyAvgForYear: number[] = []
+    let yDailyMaxForYear: number[] = []
+    let yDailyMedianForYear: number[] = []
+
+    let xAll: number[] = []
+
+    let yAll: number[] = []
     let dailyAvg: number = 0
 
-    data.slice(3).forEach((entry: any) => {
+    data.forEach((entry: any, index: number) => {
       const curDate = new Date(entry[0])
       const curYear = curDate.getFullYear()
-      xDaily.push(entry[0])
-      yDaily.push(entry[1])
+      xAll.push(entry[0])
+      yAll.push(entry[1])
 
       if (curYear == myYear) {
-        medianXDaily.push(entry[1])
+        i++
+        yDaily.push(entry[1])
+        xDaily.push(entry[0])
         dailyAvg += entry[1]
 
-        if (i == 23) {
+        if (i == 24) {
           xDailyForYear.push(entry[0])
-          //yDailyForYear.push(Math.max(...medianXDaily))
-          yDailyForYear.push(dailyAvg / 24)
-          // yDailyForYear.push(
-          //   medianXDaily.sort()[Math.round(medianXDaily.length / 2)]
-          // ) // use median to ignore 0 outliers
+          const max = Math.max(...yDaily)
+          const maxIndex = yDaily.findIndex(value => value == max)
+
+          xMaxDailyForYear.push(xDaily[maxIndex])
+          yDailyMaxForYear.push(yDaily[maxIndex])
+          yDailyAvgForYear.push(dailyAvg / 24)
+          yDailyMedianForYear.push(xDaily.sort()[Math.round(xDaily.length / 2)]) // use median to ignore 0 outliers
+
           i = 0
-          j++
-          medianXDaily = []
+          xDaily = []
+          yDaily = []
           dailyAvg = 0
         }
-        i++
       }
     })
 
-    const dataMappingYear = {
+    const dataMappingAvgYear = {
       x: xDailyForYear,
-      y: yDailyForYear,
+      y: yDailyAvgForYear,
+      type: 'scatter',
+      mode: 'lines',
+      marker: { color: '#ffc632' },
+      name: 'Avg',
     } as DataMapping
 
-    setDataMappingYear(dataMappingYear)
+    const dataMappingMaxYear = {
+      x: xMaxDailyForYear,
+      y: yDailyMaxForYear,
+      type: 'scatter',
+      mode: 'lines',
+      marker: { color: '#0377bc' },
+      name: 'Max',
+    } as DataMapping
 
-    if (!dataMapping) setDataMapping({ x: xDaily, y: yDaily } as DataMapping)
+    setDataMapping([dataMappingAvgYear, dataMappingMaxYear])
   }
 
   return (
     <div className="linechart">
-      {dataMappingYear && (
+      {dataMapping.length > 0 && (
         <Plot
           divId={`linechart-${id}`}
           className="linechart__plot"
           useResizeHandler={true}
           style={{ width: '100%', height: '100%' }}
           onRelayout={e => console.log('onRelayout', e)}
-          data={[
-            {
-              x: dataMappingYear.x,
-              y: dataMappingYear.y,
-              type: 'scatter',
-              mode: 'lines',
-              marker: { color: '#0377bc' },
-            },
-          ]}
+          data={dataMapping as any}
           config={{
             showLink: false,
             showSendToCloud: false,
@@ -120,23 +133,22 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             responsive: true,
             scrollZoom: true,
             displaylogo: false,
-            // displayModeBar: false,
             modeBarButtonsToRemove: ['toImage', 'lasso2d', 'resetScale2d'],
           }}
           layout={{
-            title: `Average PV Production Capacity: ${year}`,
+            title: `PV Production Capacity: ${year}`,
             font: { size: 10 },
             autosize: true,
             height: 350,
             yaxis: {
-              title: 'avg capacity',
+              title: 'capacity 0-1',
               zeroline: false,
             },
             margin: {
               l: 60,
               r: 30,
               b: 30,
-              t: 80,
+              t: 60,
             },
           }}
         />
