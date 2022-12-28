@@ -1,11 +1,17 @@
 import { parse } from 'papaparse'
 import { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
+import './LineChart.css'
+
+type PVData = {
+  x: number[]
+  y: number[]
+}
 
 const LineChart = () => {
-  // line chart fro m1990 to 2019
+  // line chart from 1980 to 2019
 
-  const [data, setData] = useState(null)
+  const [data, setData] = useState<PVData | null>(null)
 
   useEffect(() => {
     parse('data/ninja_pv_country_at.csv', {
@@ -18,21 +24,42 @@ const LineChart = () => {
           return
         }
 
-        // console.log(data)
+        const xDataAll: number[] = []
+        const yDataAll: number[] = []
 
-        //setData(data3)
-        const xData = []
-        const yData = []
+        const xDataDaily: number[] = []
+        const yDataDaily: number[] = []
+
+        let i = 0
+        let j = 0
+        let medianXDaily: number[] = []
+        let avgXDaily: number = 0
 
         data.slice(3).forEach((entry: any) => {
-          xData.push(entry[0])
-          yData.push(entry[1])
+          medianXDaily.push(entry[1])
+          avgXDaily += entry[1]
+          xDataAll.push(entry[0])
+          yDataAll.push(entry[1])
+
+          if (i == 24) {
+            xDataDaily.push(entry[0])
+            // yDataDaily.push(avgXDaily / 24)
+            yDataDaily.push(
+              medianXDaily.sort()[Math.round(medianXDaily.length / 2)]
+            ) // use median to ignore 0 outliers
+            i = 0
+            j++
+            medianXDaily = []
+            avgXDaily = 0
+          }
+          i++
         })
 
         const dataMapping = {
-          x: xData,
-          y: yData,
-        }
+          x: xDataDaily,
+          y: yDataDaily,
+        } as PVData
+
         console.log(dataMapping)
         setData(dataMapping)
       },
@@ -43,6 +70,9 @@ const LineChart = () => {
     <div className="linechart">
       {data && (
         <Plot
+          className="linchart__plot"
+          useResizeHandler={true}
+          style={{ width: '100%', height: '100%' }}
           data={[
             {
               x: data.x,
@@ -57,11 +87,12 @@ const LineChart = () => {
             showSendToCloud: false,
             showEditInChartStudio: false,
             showSources: false,
+            responsive: true,
           }}
           layout={{
-            width: 1020,
-            height: 440,
-            title: 'PV Production from 1990 - 2019',
+            title: 'Daily PV Production in AT from 1980 - 2019',
+            font: { size: 14 },
+            autosize: true,
           }}
         />
       )}
