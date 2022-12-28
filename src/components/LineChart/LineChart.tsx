@@ -23,59 +23,6 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
   const [dataMapping, setDataMapping] = useState<DataMapping | null>(null)
   const [data, setData] = useState<any>()
 
-  const [range, setRange] = useState<any>([`${year}-01-01`, `${year}-12-31`])
-  const [layout, setLayout] = useState<any>({
-    title: `Average PV Production Capacity ${year}`,
-    font: { size: 10 },
-    autosize: true,
-    height: 350,
-    yaxis: {
-      title: 'avg capacity',
-      zeroline: false,
-    },
-    margin: {
-      l: 60,
-      r: 30,
-      b: 30,
-      t: 80,
-    },
-    xaxis: {
-      autorange: true,
-      range: range,
-      rangeselector: {
-        buttons: [
-          {
-            count: 1,
-            label: '1m',
-            step: 'month',
-            stepmode: 'backward',
-          },
-          {
-            count: 1,
-            label: '1y',
-            step: 'year',
-            stepmode: 'backward',
-          },
-          {
-            count: 5,
-            label: '5y',
-            step: 'year',
-            stepmode: 'backward',
-          },
-          {
-            count: 10,
-            label: '10y',
-            step: 'year',
-            stepmode: 'backward',
-          },
-          { step: 'all' },
-        ],
-      },
-      rangeslider: { range: ['1980-01-01', '2019-12-31'] },
-      type: 'date',
-    },
-  })
-
   useEffect(() => {
     parseData()
   }, [])
@@ -145,21 +92,13 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
     } as DataMapping
 
     setDataMappingYear(dataMappingYear)
-    setRange([`${year}-01-01`, `${year}-12-31`])
 
     if (!dataMapping) setDataMapping({ x: xDaily, y: yDaily } as DataMapping)
   }
 
-  useEffect(() => {
-    const oldLayout = layout
-    oldLayout.range = range
-
-    setLayout(oldLayout)
-  }, [range])
-
   return (
     <div className="linechart">
-      {dataMapping && (
+      {dataMappingYear && (
         <Plot
           divId={`linechart-${id}`}
           className="linechart__plot"
@@ -167,8 +106,8 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
           style={{ width: '45%', height: '100%' }}
           data={[
             {
-              x: dataMapping.x,
-              y: dataMapping.y,
+              x: dataMappingYear.x,
+              y: dataMappingYear.y,
               type: 'scatter',
               mode: 'lines',
               marker: { color: 'black' },
@@ -183,7 +122,22 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             scrollZoom: true,
             displaylogo: false,
           }}
-          layout={layout}
+          layout={{
+            title: `Average PV Production Capacity ${year}`,
+            font: { size: 10 },
+            autosize: true,
+            height: 350,
+            yaxis: {
+              title: 'avg capacity',
+              zeroline: false,
+            },
+            margin: {
+              l: 60,
+              r: 30,
+              b: 30,
+              t: 80,
+            },
+          }}
         />
       )}
     </div>
