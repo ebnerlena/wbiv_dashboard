@@ -1,5 +1,5 @@
 import { parse } from 'papaparse'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
 import './LineChart.css'
 
@@ -102,13 +102,14 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
           className="linechart__plot"
           useResizeHandler={true}
           style={{ width: '100%', height: '100%' }}
+          onRelayout={e => console.log('onRelayout', e)}
           data={[
             {
               x: dataMappingYear.x,
               y: dataMappingYear.y,
               type: 'scatter',
               mode: 'lines',
-              marker: { color: 'black' },
+              marker: { color: '#0377bc' },
             },
           ]}
           config={{
@@ -119,9 +120,11 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             responsive: true,
             scrollZoom: true,
             displaylogo: false,
+            // displayModeBar: false,
+            modeBarButtonsToRemove: ['toImage', 'lasso2d', 'resetScale2d'],
           }}
           layout={{
-            title: `Average PV Production Capacity ${year}`,
+            title: `Average PV Production Capacity: ${year}`,
             font: { size: 10 },
             autosize: true,
             height: 350,

@@ -21,6 +21,7 @@ function App() {
           <BoxPlot
             id="pv-yearly"
             selectYear={(year: number) => setYear(year)}
+            year={year}
           />
         </div>
       </main>

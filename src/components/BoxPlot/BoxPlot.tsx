@@ -4,6 +4,7 @@ import Plot from 'react-plotly.js'
 
 type BoxPlotProps = {
   id: string
+  year: number
   selectYear: (year: number) => void
 }
 
@@ -12,10 +13,24 @@ export type DataMapping = {
   y: number[]
 }
 
-const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
-  // bar chart from 1990 to 2019
+const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year }) => {
+  const [data, setData] = useState<any[] | null>(null)
 
-  const [data, setData] = useState<any | null>(null)
+  useEffect(() => {
+    if (!data) return
+
+    const newData = data
+    newData.map((entry: any, idx: number) => {
+      if (Math.abs(1980 - year) - 1 == idx) {
+        entry.marker.color = '#0377bc'
+        return entry
+      } else {
+        entry.marker.color = '#ffc632'
+        return entry
+      }
+    })
+    setData(newData)
+  }, [year])
 
   useEffect(() => {
     parse('data/ninja_pv_country_at.csv', {
@@ -51,7 +66,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
               y: lastYData.filter(d => d != 0),
               x: curYear,
               name: curYear,
-              marker: { color: '#ffc632' },
+              marker: { color: year == curYear ? '#0377bc' : '#ffc632' },
               type: 'box',
             }
 
@@ -77,7 +92,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
           useResizeHandler={true}
           style={{ width: '100%', height: '100%' }}
           data={data}
-          onHover={(e: any) => {
+          onClick={(e: any) => {
             selectYear(e.points[0].x)
           }}
           config={{
@@ -100,7 +115,6 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
               b: 30,
               t: 50,
             },
-            // paper_bgcolor: 'rgb(243, 243, 243)',
             showlegend: false,
             font: { size: 10 },
             autosize: true,

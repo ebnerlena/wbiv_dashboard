@@ -1,5 +1,5 @@
 import { parse } from 'papaparse'
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
 import './HeatMap.css'
 
@@ -30,8 +30,6 @@ var dataStart = [
 const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
   const [data, setData] = useState<any | null>(null)
   const [dataMapping, setDataMapping] = useState<any | null>(null)
-  const [ZData, setZData] = useState<number[][] | null>(null)
-  const [XData, setXData] = useState<string[] | null>(null)
 
   useEffect(() => {
     parseData()
@@ -70,7 +68,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
       const curYear = curDate.getFullYear()
 
       if (curYear == myYear) {
-        if (i == 7) {
+        if (i == 8) {
           zData[0].push(entry[2])
         } else if (i == 11) {
           zData[1].push(entry[2])
@@ -78,7 +76,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
           zData[2].push(entry[2])
         } else if (i == 19) {
           zData[3].push(entry[2])
-        } else if (i == 23) {
+        } else if (i == 24) {
           i = 0
           xData.push(entry[0])
         }
@@ -92,8 +90,6 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
     newDate[0].x = xData
 
     setDataMapping(newDate)
-    setZData(zData)
-    setXData(xData)
   }
 
   return (
@@ -103,7 +99,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
           divId={`heatmap-${id}`}
           className="heatmap__plot"
           useResizeHandler={true}
-          style={{ width: '100%', height: '100%' }}
+          // style={{ width: '100%', height: '100%' }}
           data={dataMapping}
           onHover={(e: any) => {
             // selectYear(e.points[0].x)
@@ -114,13 +110,15 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
             showEditInChartStudio: false,
             showSources: false,
             responsive: true,
-            displayModeBar: false,
+            displayModeBar: true,
             editable: false,
-            scrollZoom: false,
+            scrollZoom: true,
+            modeBarButtonsToRemove: ['toImage', 'lasso2d', 'resetScale2d'],
+            displaylogo: false,
           }}
           layout={{
             title: {
-              text: `Daily Temperature in °C ${year}`,
+              text: `Daily Temperature in °C: ${year}`,
             },
             margin: {
               l: 80,
