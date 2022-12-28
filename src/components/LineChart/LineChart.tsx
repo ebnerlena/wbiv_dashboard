@@ -15,8 +15,6 @@ type DataMapping = {
 }
 
 const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
-  // line chart from 1980 to 2019
-
   const [dataMappingYear, setDataMappingYear] = useState<DataMapping | null>(
     null
   )
@@ -103,7 +101,7 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
           divId={`linechart-${id}`}
           className="linechart__plot"
           useResizeHandler={true}
-          style={{ width: '45%', height: '100%' }}
+          style={{ width: '100%', height: '100%' }}
           data={[
             {
               x: dataMappingYear.x,

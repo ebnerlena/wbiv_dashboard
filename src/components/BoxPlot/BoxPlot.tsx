@@ -88,6 +88,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
             responsive: true,
             displayModeBar: false,
             editable: false,
+            scrollZoom: false,
           }}
           layout={{
             title: {
