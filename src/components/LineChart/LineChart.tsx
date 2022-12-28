@@ -17,9 +17,64 @@ type DataMapping = {
 const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
   // line chart from 1980 to 2019
 
+  const [dataMappingYear, setDataMappingYear] = useState<DataMapping | null>(
+    null
+  )
   const [dataMapping, setDataMapping] = useState<DataMapping | null>(null)
   const [data, setData] = useState<any>()
-  const [yearData, setYearData] = useState<DataMapping | null>(null)
+
+  const [range, setRange] = useState<any>([`${year}-01-01`, `${year}-12-31`])
+  const [layout, setLayout] = useState<any>({
+    title: `Average PV Production Capacity ${year}`,
+    font: { size: 10 },
+    autosize: true,
+    height: 350,
+    yaxis: {
+      title: 'avg capacity',
+      zeroline: false,
+    },
+    margin: {
+      l: 60,
+      r: 30,
+      b: 30,
+      t: 80,
+    },
+    xaxis: {
+      autorange: true,
+      range: range,
+      rangeselector: {
+        buttons: [
+          {
+            count: 1,
+            label: '1m',
+            step: 'month',
+            stepmode: 'backward',
+          },
+          {
+            count: 1,
+            label: '1y',
+            step: 'year',
+            stepmode: 'backward',
+          },
+          {
+            count: 5,
+            label: '5y',
+            step: 'year',
+            stepmode: 'backward',
+          },
+          {
+            count: 10,
+            label: '10y',
+            step: 'year',
+            stepmode: 'backward',
+          },
+          { step: 'all' },
+        ],
+      },
+      rangeslider: { range: ['1980-01-01', '2019-12-31'] },
+      type: 'date',
+    },
+  })
 
   useEffect(() => {
     parseData()
@@ -53,11 +108,16 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
     let medianXDaily: number[] = []
     let xDailyForYear: number[] = []
     let yDailyForYear: number[] = []
+
+    let xDaily: number[] = []
+    let yDaily: number[] = []
     let dailyAvg: number = 0
 
     data.slice(3).forEach((entry: any) => {
       const curDate = new Date(entry[0])
       const curYear = curDate.getFullYear()
+      xDaily.push(entry[0])
+      yDaily.push(entry[1])
 
       if (curYear == myYear) {
         medianXDaily.push(entry[1])
@@ -79,13 +139,23 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
       }
     })
 
-    const dataMapping = {
+    const dataMappingYear = {
       x: xDailyForYear,
       y: yDailyForYear,
     } as DataMapping
 
-    setDataMapping(dataMapping)
+    setDataMappingYear(dataMappingYear)
+    setRange([`${year}-01-01`, `${year}-12-31`])
+
+    if (!dataMapping) setDataMapping({ x: xDaily, y: yDaily } as DataMapping)
   }
+
+  useEffect(() => {
+    const oldLayout = layout
+    oldLayout.range = range
+
+    setLayout(oldLayout)
+  }, [range])
 
   return (
     <div className="linechart">
@@ -111,23 +181,9 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             showSources: false,
             responsive: true,
             scrollZoom: true,
+            displaylogo: false,
           }}
-          layout={{
-            title: `Average PV Production Capacity ${year}`,
-            font: { size: 10 },
-            autosize: true,
-            height: 350,
-            yaxis: {
-              title: 'avg capacity',
-              zeroline: false,
-            },
-            margin: {
-              l: 60,
-              r: 30,
-              b: 30,
-              t: 60,
-            },
-          }}
+          layout={layout}
         />
       )}
     </div>
