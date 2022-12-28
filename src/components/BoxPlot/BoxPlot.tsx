@@ -51,7 +51,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
               y: lastYData.filter(d => d != 0),
               x: curYear,
               name: curYear,
-              marker: { color: '#FF851B' },
+              marker: { color: '#ffc632' },
               type: 'box',
             }
 
@@ -77,12 +77,8 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
           useResizeHandler={true}
           style={{ width: '100%', height: '100%' }}
           data={data}
-          onClick={(e: any) => {
-            console.log('click', e)
-            selectYear(e.points[0].x)
-          }}
           onHover={(e: any) => {
-            console.log('hover', e)
+            selectYear(e.points[0].x)
           }}
           config={{
             showLink: false,
@@ -91,6 +87,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
             showSources: false,
             responsive: true,
             displayModeBar: false,
+            editable: false,
           }}
           layout={{
             title: {
@@ -106,7 +103,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
             showlegend: false,
             font: { size: 10 },
             autosize: true,
-            height: 350,
+            height: 320,
           }}
         />
       )}
