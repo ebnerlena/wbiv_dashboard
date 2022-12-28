@@ -113,7 +113,7 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             scrollZoom: true,
           }}
           layout={{
-            title: 'Yearly AVG PV Production Capacity',
+            title: `Average PV Production Capacity ${year}`,
             font: { size: 10 },
             autosize: true,
             height: 350,

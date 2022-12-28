@@ -91,7 +91,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear }) => {
           }}
           layout={{
             title: {
-              text: 'Yearly PV Production w/ 0',
+              text: 'Yearly PV Production Capacity w/ 0',
             },
             margin: {
               l: 50,
