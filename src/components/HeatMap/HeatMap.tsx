@@ -24,6 +24,11 @@ var dataStart = [
     y: ['Morning', 'Midday', 'Afternoon', 'Evening'],
     type: 'heatmap',
     hoverongaps: false,
+    hovertemplate:
+      ' Daytime: %{y}<br>' +
+      ' Date: %{x} <br><br>' +
+      ' Temperature: %{z} ' +
+      '<extra></extra>',
   },
 ]
 
