@@ -141,7 +141,7 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             autosize: true,
 
             yaxis: {
-              title: 'capacity 0-1',
+              title: 'Capacity 0-1',
               zeroline: false,
             },
             margin: {
