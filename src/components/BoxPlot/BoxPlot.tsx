@@ -1,6 +1,7 @@
 import { parse } from 'papaparse'
 import { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
+import './BoxPlot.css'
 
 type BoxPlotProps = {
   id: string

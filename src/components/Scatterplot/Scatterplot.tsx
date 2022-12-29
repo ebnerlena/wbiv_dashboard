@@ -1,25 +1,20 @@
 import { parse } from 'papaparse'
+import { ScatterData } from 'plotly.js'
 import React, { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
-import './LineChart.css'
+import './Scatterplot.css'
 
-type LineChartProps = {
+type ScatterplotProps = {
   id: string
   year: number
 }
 
-type DataMapping = {
-  x: number[]
-  y: number[]
-  type: string
-  mode: string
-  marker: { color: string }
-  name: string
-}
-
-const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
-  const [dataMapping, setDataMapping] = useState<DataMapping[]>([])
+const Scatterplot: React.FC<ScatterplotProps> = ({ id, year }) => {
+  const [dataMapping, setDataMapping] = useState<ScatterData[]>([])
   const [data, setData] = useState<any>()
+  const [tempData, setTempData] = useState<any>()
+  const [yData, setYData] = useState<number[] | null>(null)
+  const [yTempData, setYTempData] = useState<number[] | null>(null)
 
   useEffect(() => {
     parseData()
@@ -39,11 +34,26 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
         updateYearData(data)
       },
     })
+
+    parse('data/ninja_weather_country_at.csv', {
+      header: false,
+      download: true,
+      dynamicTyping: true,
+      complete: ({ data, errors }) => {
+        if (errors.length > 0) {
+          console.log('Error parsing pv csv data: ', errors)
+          return
+        }
+        setTempData(data.slice(3))
+        updateYearTempData(data)
+      },
+    })
   }
 
   useEffect(() => {
-    if (data && data != undefined) {
+    if (data && data != undefined && tempData && tempData != undefined) {
       updateYearData(data)
+      updateYearTempData(tempData)
     }
   }, [year])
 
@@ -59,16 +69,11 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
     let yDailyMaxForYear: number[] = []
     let yDailyMedianForYear: number[] = []
 
-    let xAll: number[] = []
-
-    let yAll: number[] = []
     let dailyAvg: number = 0
 
-    data.forEach((entry: any, index: number) => {
+    data.forEach((entry: any) => {
       const curDate = new Date(entry[0])
       const curYear = curDate.getFullYear()
-      xAll.push(entry[0])
-      yAll.push(entry[1])
 
       if (curYear == myYear) {
         i++
@@ -94,35 +99,73 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
       }
     })
 
-    const dataMappingAvgYear = {
-      x: xDailyForYear,
-      y: yDailyAvgForYear,
-      type: 'scatter',
-      mode: 'lines',
-      marker: { color: '#ffc632' },
-      name: 'Avg',
-    } as DataMapping
-
-    const dataMappingMaxYear = {
-      x: xMaxDailyForYear,
-      y: yDailyMaxForYear,
-      type: 'scatter',
-      mode: 'lines',
-      marker: { color: '#0377bc' },
-      name: 'Max',
-    } as DataMapping
-
-    setDataMapping([dataMappingAvgYear, dataMappingMaxYear])
+    setYData(yDailyAvgForYear)
   }
 
+  const updateYearTempData = (data: any) => {
+    const myYear = year
+
+    let i: number = 0
+    let dailyAvg: number = 0
+    let xDaily: number[] = []
+    let yDaily: number[] = []
+    let xDailyForYear: number[] = []
+    let yDailyForYear: number[] = []
+
+    data.forEach((entry: any) => {
+      const curDate = new Date(entry[0])
+      const curYear = curDate.getFullYear()
+
+      if (curYear == myYear) {
+        i++
+        yDaily.push(entry[2])
+        xDaily.push(entry[0])
+        dailyAvg += entry[2]
+
+        if (i == 24) {
+          xDailyForYear.push(entry[0])
+          yDailyForYear.push(dailyAvg / 24)
+
+          i = 0
+          xDaily = []
+          yDaily = []
+          dailyAvg = 0
+        }
+      }
+    })
+
+    setYTempData(yDailyForYear)
+  }
+
+  useEffect(() => {
+    if (!yTempData || !yData) return
+
+    const dataMappingYear = {
+      x: yData,
+      y: yTempData,
+      type: 'scatter',
+      mode: 'markers',
+      marker: {
+        color: yTempData,
+        colorscale: 'RdBu',
+        size: 5,
+      },
+      name: 'Temp',
+      hovertemplate:
+        ' Capacity: %{x} <br>' + ' Temperature: %{y} ' + '<extra></extra>',
+    } as ScatterData
+
+    setDataMapping([dataMappingYear])
+  }, [yTempData])
+
   return (
-    <div className="linechart">
+    <div className="scatterplot">
       {dataMapping.length > 0 && (
         <Plot
-          divId={`linechart-${id}`}
-          className="linechart__plot"
+          divId={`scatterplot-${id}`}
+          className="scatterplot__plot"
           useResizeHandler={true}
-          style={{ width: '100%', height: '100%' }}
+          // style={{ width: '100%', height: '100%' }}
           onRelayout={e => console.log('onRelayout', e)}
           data={dataMapping as any}
           config={{
@@ -136,18 +179,22 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             modeBarButtonsToRemove: ['toImage', 'lasso2d', 'resetScale2d'],
           }}
           layout={{
-            title: `Daily PV Production Capacity: ${year}`,
+            title: `Daily PV Production Capacity and Temperature: ${year}`,
             font: { size: 9 },
             autosize: true,
-
+            // height: 150,
             yaxis: {
-              title: 'capacity 0-1',
+              title: 'Daily Avg Temperature',
               zeroline: false,
             },
+            // xaxis: {
+            //   title: 'Capacity 0-1',
+            //   zeroline: false,
+            // },
             margin: {
               l: 60,
               r: 30,
-              b: 30,
+              b: 40,
               t: 60,
             },
           }}
@@ -157,4 +204,4 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
   )
 }
 
-export default LineChart
+export default Scatterplot

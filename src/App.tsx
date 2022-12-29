@@ -4,6 +4,7 @@ import BoxPlot from './components/BoxPlot/BoxPlot'
 import Header from './components/Header/Header'
 import HeatMap from './components/HeatMap/HeatMap'
 import LineChart from './components/LineChart/LineChart'
+import Scatterplot from './components/Scatterplot/Scatterplot'
 
 function App() {
   const [year, setYear] = useState<number>(2019)
@@ -14,7 +15,10 @@ function App() {
       <main className="content">
         <div className="content__top">
           <LineChart id="pv-daily" year={year} />
-          <HeatMap id="pv-yearly" year={year} />
+          <div className="content__top-right">
+            <HeatMap id="pv-yearly" year={year} />
+            <Scatterplot id="pv-daily" year={year} />
+          </div>
         </div>
         <div className="content__bottom">
           {/* <BarChart id="pv-yearly" /> */}

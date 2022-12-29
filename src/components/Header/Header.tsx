@@ -10,7 +10,7 @@ function Header() {
   const [weather, setWeather] = useState<Weather | null>()
 
   useEffect(() => {
-    if (API_KEY == undefined) return
+    if (true || API_KEY == undefined) return
     const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
 
     fetch(url)

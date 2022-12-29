@@ -23,6 +23,7 @@ var dataStart = [
     x: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
     y: ['Morning', 'Midday', 'Afternoon', 'Evening'],
     type: 'heatmap',
+    colorscale: 'Portland',
     hoverongaps: false,
     hovertemplate:
       ' Daytime: %{y}<br>' +
@@ -133,9 +134,9 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
             },
 
             showlegend: false,
-            font: { size: 10 },
+            font: { size: 9 },
             autosize: true,
-            height: 320,
+            // height: 320,
           }}
         />
       )}
