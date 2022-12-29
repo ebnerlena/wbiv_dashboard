@@ -99,20 +99,20 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
       y: yDailyAvgForYear,
       type: 'scatter',
       mode: 'lines',
-      marker: { color: '#ffc632' },
+      marker: { color: '#303030' }, //'#ffc632'
       name: 'Avg',
     } as DataMapping
 
-    const dataMappingMaxYear = {
-      x: xMaxDailyForYear,
-      y: yDailyMaxForYear,
-      type: 'scatter',
-      mode: 'lines',
-      marker: { color: '#0377bc' },
-      name: 'Max',
-    } as DataMapping
+    // const dataMappingMaxYear = {
+    //   x: xMaxDailyForYear,
+    //   y: yDailyMaxForYear,
+    //   type: 'scatter',
+    //   mode: 'lines',
+    //   marker: { color: '#505050' }, //#0377bc // 213547
+    //   name: 'Max',
+    // } as DataMapping
 
-    setDataMapping([dataMappingAvgYear, dataMappingMaxYear])
+    setDataMapping([dataMappingAvgYear])
   }
 
   return (
@@ -141,7 +141,7 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             autosize: true,
 
             yaxis: {
-              title: 'Capacity 0-1',
+              title: 'Capacity',
               zeroline: false,
             },
             margin: {

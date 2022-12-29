@@ -184,7 +184,7 @@ const Scatterplot: React.FC<ScatterplotProps> = ({ id, year }) => {
             autosize: true,
             // height: 150,
             yaxis: {
-              title: 'Daily Avg Temperature',
+              title: 'Avg Temperature',
               zeroline: false,
             },
             // xaxis: {
@@ -194,8 +194,8 @@ const Scatterplot: React.FC<ScatterplotProps> = ({ id, year }) => {
             margin: {
               l: 60,
               r: 30,
-              b: 40,
-              t: 60,
+              b: 30,
+              t: 50,
             },
           }}
         />

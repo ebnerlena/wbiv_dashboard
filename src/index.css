@@ -84,3 +84,7 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+.main-svg {
+  border-radius: 2px;
+}

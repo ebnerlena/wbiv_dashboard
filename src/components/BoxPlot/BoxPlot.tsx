@@ -23,7 +23,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year }) => {
     const newData = data
     newData.map((entry: any, idx: number) => {
       if (Math.abs(1980 - year) - 1 == idx) {
-        entry.marker.color = '#0377bc'
+        entry.marker.color = '#303030'
         return entry
       } else {
         entry.marker.color = '#ffc632'
@@ -67,7 +67,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year }) => {
               y: lastYData.filter(d => d != 0),
               x: curYear,
               name: curYear,
-              marker: { color: year == curYear ? '#0377bc' : '#ffc632' },
+              marker: { color: year == curYear ? '#303030' : '#ffc632' },
               type: 'box',
             }
 
@@ -111,8 +111,8 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year }) => {
               text: 'Yearly PV Production Capacity w/ 0',
             },
             margin: {
-              l: 50,
-              r: 50,
+              l: 30,
+              r: 30,
               b: 30,
               t: 50,
             },
