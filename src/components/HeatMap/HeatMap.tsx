@@ -23,7 +23,7 @@ var dataStart = [
     x: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
     y: ['Morning', 'Midday', 'Afternoon', 'Evening'],
     type: 'heatmap',
-    colorscale: 'Portland',
+    colorscale: 'RdBu',
     hoverongaps: false,
     hovertemplate:
       ' Daytime: %{y}<br>' +
@@ -74,6 +74,7 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
       const curYear = curDate.getFullYear()
 
       if (curYear == myYear) {
+        i++
         if (i == 8) {
           zData[0].push(entry[2])
         } else if (i == 11) {
@@ -86,16 +87,14 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
           i = 0
           xData.push(entry[0])
         }
-
-        i++
       }
     })
 
-    const newDate = dataStart
-    newDate[0].z = zData
-    newDate[0].x = xData
+    const newData = dataStart
+    newData[0].z = zData
+    newData[0].x = xData
 
-    setDataMapping(newDate)
+    setDataMapping(newData)
   }
 
   return (

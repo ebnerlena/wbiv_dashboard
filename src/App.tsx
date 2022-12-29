@@ -15,6 +15,7 @@ function App() {
       <main className="content">
         <div className="content__top">
           <LineChart id="pv-daily" year={year} />
+          {/* <Scatterplot id="pv-daily" year={year} /> */}
           <div className="content__top-right">
             <HeatMap id="pv-yearly" year={year} />
             <Scatterplot id="pv-daily" year={year} />

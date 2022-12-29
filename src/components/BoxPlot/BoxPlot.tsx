@@ -91,7 +91,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year }) => {
           divId={`boxplot-${id}`}
           className="boxplot__plot"
           useResizeHandler={true}
-          style={{ width: '100%', height: '100%' }}
+          // style={{ width: '100%', height: '100%' }}
           data={data}
           onClick={(e: any) => {
             selectYear(e.points[0].x)
@@ -119,7 +119,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year }) => {
             showlegend: false,
             font: { size: 10 },
             autosize: true,
-            height: 320,
+            // height: 320,
           }}
         />
       )}

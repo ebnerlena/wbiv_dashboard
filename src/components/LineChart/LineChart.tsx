@@ -147,7 +147,7 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             margin: {
               l: 60,
               r: 30,
-              b: 30,
+              b: 25,
               t: 60,
             },
           }}
