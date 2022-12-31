@@ -5,20 +5,39 @@ import Header from './components/Header/Header'
 import HeatMap from './components/HeatMap/HeatMap'
 import LineChart from './components/LineChart/LineChart'
 import Scatterplot from './components/Scatterplot/Scatterplot'
+import { Range } from './types/Range'
 
 function App() {
   const [year, setYear] = useState<number>(2019)
+  const [yearChartsSelection, setYearChartsSelection] = useState<Range | null>(
+    null
+  )
 
   return (
     <div className="App">
       <Header />
       <main className="content">
         <div className="content__top">
-          <LineChart id="pv-daily" year={year} />
+          <LineChart
+            id="pv-daily"
+            year={year}
+            selection={yearChartsSelection}
+            updateSelection={setYearChartsSelection}
+          />
           {/* <Scatterplot id="pv-daily" year={year} /> */}
           <div className="content__top-right">
-            <HeatMap id="pv-yearly" year={year} />
-            <Scatterplot id="pv-daily" year={year} />
+            <HeatMap
+              id="pv-yearly"
+              year={year}
+              selection={yearChartsSelection}
+              updateSelection={setYearChartsSelection}
+            />
+            <Scatterplot
+              id="pv-daily"
+              year={year}
+              selection={yearChartsSelection}
+              updateSelection={setYearChartsSelection}
+            />
           </div>
         </div>
         <div className="content__bottom">

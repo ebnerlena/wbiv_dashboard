@@ -1,24 +1,145 @@
 import { parse } from 'papaparse'
-import { ScatterData } from 'plotly.js'
+import { PlotRelayoutEvent, ScatterData } from 'plotly.js'
 import React, { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
+import { Range } from '../../types/Range'
 import './Scatterplot.css'
 
 type ScatterplotProps = {
   id: string
   year: number
+  selection: Range | null
+  updateSelection: (range: Range) => void
 }
 
-const Scatterplot: React.FC<ScatterplotProps> = ({ id, year }) => {
+const Scatterplot: React.FC<ScatterplotProps> = ({ id, year, selection }) => {
   const [dataMapping, setDataMapping] = useState<ScatterData[]>([])
   const [data, setData] = useState<any>()
   const [tempData, setTempData] = useState<any>()
-  const [yData, setYData] = useState<number[] | null>(null)
+  const [xData, setXData] = useState<number[] | null>(null)
+  const [xDataMax, setXDataMax] = useState<number[] | null>(null)
+  const [zData, setZData] = useState<number[] | null>(null)
   const [yTempData, setYTempData] = useState<number[] | null>(null)
+  const [range, setRange] = useState<Range | null>(selection)
 
   useEffect(() => {
     parseData()
   }, [])
+
+  useEffect(() => {
+    if (data && data != undefined && tempData && tempData != undefined) {
+      updateYearData(data)
+      updateYearTempData(tempData)
+    }
+  }, [year])
+
+  useEffect(() => {
+    if (selection != undefined && selection.xAxisFrom != undefined) {
+      const xRangeFrom = zData?.findIndex((data, i) => {
+        const dateSelection = new Date(selection.xAxisFrom || '')
+        const date = new Date(data)
+
+        if (
+          dateSelection.getDay() == date.getDay() &&
+          dateSelection.getMonth() == date.getMonth()
+        )
+          return i
+      })
+      const xRangeTo = zData?.findIndex((data, i) => {
+        const dateSelection = new Date(selection.xAxisTo || '')
+        const date = new Date(data)
+
+        if (
+          dateSelection.getDay() == date.getDay() &&
+          dateSelection.getMonth() == date.getMonth()
+        )
+          return i
+      })
+
+      if (
+        xRangeFrom != undefined &&
+        xRangeTo != undefined &&
+        xDataMax != undefined &&
+        xData
+      ) {
+        const newRange = {
+          xAxisFrom: xData[xRangeFrom],
+          xAxisTo: xDataMax[xRangeTo],
+          yAxisFrom: undefined,
+          yAxisTo: undefined,
+        } as Range
+        setRange(newRange)
+      }
+    }
+  }, [selection])
+
+  useEffect(() => {
+    if (!yTempData || !xData) return
+
+    const dataMappingYear = {
+      x: xData,
+      y: yTempData,
+      type: 'scatter',
+      mode: 'markers',
+      marker: {
+        color: yTempData,
+        colorscale: 'RdBu',
+        size: 5,
+      },
+      name: 'Temp',
+      hovertemplate:
+        ' Capacity: %{x} <br>' + ' Temperature: %{y} ' + '<extra></extra>',
+    } as ScatterData
+
+    setDataMapping([dataMappingYear])
+  }, [yTempData])
+
+  const updateYearData = (data: any) => {
+    const myYear = year
+
+    let i = 0
+    let xDaily: number[] = []
+    let yDaily: number[] = []
+    let xDailyForYear: number[] = []
+    let xMaxDailyForYear: number[] = []
+    let yDailyAvgForYear: number[] = []
+    let xDailyMaxForYear: number[] = []
+    let yDailyMedianForYear: number[] = []
+
+    let dailyAvg: number = 0
+
+    data.forEach((entry: any) => {
+      const curDate = new Date(entry[0])
+      const curYear = curDate.getFullYear()
+
+      if (curYear == myYear) {
+        i++
+        yDaily.push(entry[1])
+        xDaily.push(entry[0])
+        dailyAvg += entry[1]
+
+        if (i == 24) {
+          xDailyForYear.push(entry[0])
+          const max = Math.max(...yDaily)
+          const maxIndex = yDaily.findIndex(value => value == max)
+
+          xMaxDailyForYear.push(xDaily[maxIndex])
+          xDailyMaxForYear.push(yDaily[maxIndex])
+          yDailyAvgForYear.push(dailyAvg / 24)
+          yDailyMedianForYear.push(xDaily.sort()[Math.round(xDaily.length / 2)]) // use median to ignore 0 outliers
+
+          i = 0
+          xDaily = []
+          yDaily = []
+          dailyAvg = 0
+        }
+      }
+    })
+
+    setXData(xDailyMaxForYear)
+    setZData(xMaxDailyForYear)
+    setXDataMax(xDailyMaxForYear)
+  }
 
   const parseData = () => {
     parse('data/ninja_pv_country_at.csv', {
@@ -48,58 +169,6 @@ const Scatterplot: React.FC<ScatterplotProps> = ({ id, year }) => {
         updateYearTempData(data)
       },
     })
-  }
-
-  useEffect(() => {
-    if (data && data != undefined && tempData && tempData != undefined) {
-      updateYearData(data)
-      updateYearTempData(tempData)
-    }
-  }, [year])
-
-  const updateYearData = (data: any) => {
-    const myYear = year
-
-    let i = 0
-    let xDaily: number[] = []
-    let yDaily: number[] = []
-    let xDailyForYear: number[] = []
-    let xMaxDailyForYear: number[] = []
-    let yDailyAvgForYear: number[] = []
-    let yDailyMaxForYear: number[] = []
-    let yDailyMedianForYear: number[] = []
-
-    let dailyAvg: number = 0
-
-    data.forEach((entry: any) => {
-      const curDate = new Date(entry[0])
-      const curYear = curDate.getFullYear()
-
-      if (curYear == myYear) {
-        i++
-        yDaily.push(entry[1])
-        xDaily.push(entry[0])
-        dailyAvg += entry[1]
-
-        if (i == 24) {
-          xDailyForYear.push(entry[0])
-          const max = Math.max(...yDaily)
-          const maxIndex = yDaily.findIndex(value => value == max)
-
-          xMaxDailyForYear.push(xDaily[maxIndex])
-          yDailyMaxForYear.push(yDaily[maxIndex])
-          yDailyAvgForYear.push(dailyAvg / 24)
-          yDailyMedianForYear.push(xDaily.sort()[Math.round(xDaily.length / 2)]) // use median to ignore 0 outliers
-
-          i = 0
-          xDaily = []
-          yDaily = []
-          dailyAvg = 0
-        }
-      }
-    })
-
-    setYData(yDailyAvgForYear)
   }
 
   const updateYearTempData = (data: any) => {
@@ -137,26 +206,20 @@ const Scatterplot: React.FC<ScatterplotProps> = ({ id, year }) => {
     setYTempData(yDailyForYear)
   }
 
-  useEffect(() => {
-    if (!yTempData || !yData) return
-
-    const dataMappingYear = {
-      x: yData,
-      y: yTempData,
-      type: 'scatter',
-      mode: 'markers',
-      marker: {
-        color: yTempData,
-        colorscale: 'RdBu',
-        size: 5,
-      },
-      name: 'Temp',
-      hovertemplate:
-        ' Capacity: %{x} <br>' + ' Temperature: %{y} ' + '<extra></extra>',
-    } as ScatterData
-
-    setDataMapping([dataMappingYear])
-  }, [yTempData])
+  const updateRange = (
+    xFrom: number | undefined,
+    xTo: number | undefined,
+    yFrom: number | undefined,
+    yTo: number | undefined
+  ) => {
+    const newRange = {
+      xAxisFrom: xFrom,
+      xAxisTo: xTo,
+      yAxisFrom: yFrom,
+      yAxisTo: yTo,
+    } as Range
+    setRange(newRange)
+  }
 
   return (
     <div className="scatterplot">
@@ -166,7 +229,14 @@ const Scatterplot: React.FC<ScatterplotProps> = ({ id, year }) => {
           className="scatterplot__plot"
           useResizeHandler={true}
           // style={{ width: '100%', height: '100%' }}
-          onRelayout={e => console.log('onRelayout', e)}
+          onRelayout={(e: PlotRelayoutEvent) =>
+            updateRange(
+              e['xaxis.range[0]'],
+              e['xaxis.range[1]'],
+              e['yaxis.range[0]'],
+              e['yaxis.range[1]']
+            )
+          }
           data={dataMapping as any}
           config={{
             showLink: false,
@@ -186,11 +256,11 @@ const Scatterplot: React.FC<ScatterplotProps> = ({ id, year }) => {
             yaxis: {
               title: 'Avg Temperature',
               zeroline: false,
+              range: range ? [range.yAxisFrom, range.yAxisTo] : undefined,
             },
-            // xaxis: {
-            //   title: 'Capacity 0-1',
-            //   zeroline: false,
-            // },
+            xaxis: {
+              range: range ? [range.xAxisFrom, range.xAxisTo] : undefined,
+            },
             margin: {
               l: 60,
               r: 30,

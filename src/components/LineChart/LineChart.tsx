@@ -1,25 +1,26 @@
 import { parse } from 'papaparse'
+import { PlotData, PlotRelayoutEvent } from 'plotly.js'
 import React, { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
+import { Range } from '../../types/Range'
 import './LineChart.css'
 
 type LineChartProps = {
   id: string
   year: number
+  selection: Range | null
+  updateSelection: (range: Range) => void
 }
 
-type DataMapping = {
-  x: number[]
-  y: number[]
-  type: string
-  mode: string
-  marker: { color: string }
-  name: string
-}
-
-const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
-  const [dataMapping, setDataMapping] = useState<DataMapping[]>([])
+const LineChart: React.FC<LineChartProps> = ({
+  id,
+  year,
+  selection,
+  updateSelection,
+}) => {
+  const [dataMapping, setDataMapping] = useState<PlotData[]>([])
   const [data, setData] = useState<any>()
+  const [range, setRange] = useState<Range | null>(selection)
 
   useEffect(() => {
     parseData()
@@ -46,6 +47,11 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
       updateYearData(data)
     }
   }, [year])
+
+  useEffect(() => {
+    // console.log('new selection', selection)
+    setRange(selection)
+  }, [selection])
 
   const updateYearData = (data: any) => {
     const myYear = year
@@ -99,20 +105,42 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
       y: yDailyAvgForYear,
       type: 'scatter',
       mode: 'lines',
-      marker: { color: '#303030' }, //'#ffc632'
+      marker: { color: '#0377bc' }, //'#ffc632'
       name: 'Avg',
-    } as DataMapping
+    } as PlotData
 
-    // const dataMappingMaxYear = {
-    //   x: xMaxDailyForYear,
-    //   y: yDailyMaxForYear,
-    //   type: 'scatter',
-    //   mode: 'lines',
-    //   marker: { color: '#505050' }, //#0377bc // 213547
-    //   name: 'Max',
-    // } as DataMapping
+    const dataMappingMaxYear = {
+      x: xMaxDailyForYear,
+      y: yDailyMaxForYear,
+      type: 'scatter',
+      mode: 'lines',
+      marker: { color: '#505050' }, //#0377bc // 213547
+      name: 'Max',
+    } as PlotData
 
-    setDataMapping([dataMappingAvgYear])
+    setDataMapping([dataMappingMaxYear, dataMappingAvgYear])
+  }
+
+  const updateRange = (
+    xFrom: number | undefined,
+    xTo: number | undefined,
+    yFrom: number | undefined,
+    yTo: number | undefined
+  ) => {
+    const newRange = {
+      xAxisFrom: xFrom,
+      xAxisTo: xTo,
+      yAxisFrom: yFrom,
+      yAxisTo: yTo,
+    } as Range
+
+    setRange(newRange)
+    updateSelection({
+      xAxisFrom: xFrom,
+      xAxisTo: xTo,
+      yAxisFrom: undefined,
+      yAxisTo: undefined,
+    })
   }
 
   return (
@@ -123,7 +151,14 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
           className="linechart__plot"
           useResizeHandler={true}
           style={{ width: '100%', height: '100%' }}
-          onRelayout={e => console.log('onRelayout', e)}
+          onRelayout={(e: PlotRelayoutEvent) =>
+            updateRange(
+              e['xaxis.range[0]'],
+              e['xaxis.range[1]'],
+              e['yaxis.range[0]'],
+              e['yaxis.range[1]']
+            )
+          }
           data={dataMapping as any}
           config={{
             showLink: false,
@@ -139,10 +174,13 @@ const LineChart: React.FC<LineChartProps> = ({ id, year }) => {
             title: `Daily PV Production Capacity: ${year}`,
             font: { size: 9 },
             autosize: true,
-
             yaxis: {
               title: 'Capacity',
               zeroline: false,
+              range: range ? [range.yAxisFrom, range.yAxisTo] : undefined,
+            },
+            xaxis: {
+              range: range ? [range.xAxisFrom, range.xAxisTo] : undefined,
             },
             margin: {
               l: 60,

@@ -1,11 +1,15 @@
 import { parse } from 'papaparse'
+import { PlotRelayoutEvent } from 'plotly.js'
 import React, { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
+import { Range } from '../../types/Range'
 import './HeatMap.css'
 
 type HeatMapProps = {
   id: string
   year: number
+  selection: Range | null
+  updateSelection: (range: Range) => void
 }
 
 export type DataMapping = {
@@ -33,13 +37,27 @@ var dataStart = [
   },
 ]
 
-const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
+const HeatMap: React.FC<HeatMapProps> = ({
+  id,
+  year,
+  selection,
+  updateSelection,
+}) => {
   const [data, setData] = useState<any | null>(null)
   const [dataMapping, setDataMapping] = useState<any | null>(null)
+  const [range, setRange] = useState<Range | null>(selection)
 
   useEffect(() => {
     parseData()
   }, [])
+
+  useEffect(() => {
+    if (data && data != undefined) updateYearData(data)
+  }, [year])
+
+  useEffect(() => {
+    setRange(selection)
+  }, [selection])
 
   const parseData = () => {
     parse('data/ninja_weather_country_at.csv', {
@@ -57,10 +75,6 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
       },
     })
   }
-
-  useEffect(() => {
-    if (data && data != undefined) updateYearData(data)
-  }, [year])
 
   const updateYearData = (data: any) => {
     const myYear = year
@@ -97,6 +111,27 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
     setDataMapping(newData)
   }
 
+  const updateRange = (
+    xFrom: number | undefined,
+    xTo: number | undefined,
+    yFrom: number | undefined,
+    yTo: number | undefined
+  ) => {
+    const newRange = {
+      xAxisFrom: xFrom,
+      xAxisTo: xTo,
+      yAxisFrom: yFrom,
+      yAxisTo: yTo,
+    } as Range
+    setRange(newRange)
+    updateSelection({
+      xAxisFrom: xFrom,
+      xAxisTo: xTo,
+      yAxisFrom: undefined,
+      yAxisTo: undefined,
+    })
+  }
+
   return (
     <div className="heatmap">
       {dataMapping && (
@@ -106,9 +141,14 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
           useResizeHandler={true}
           // style={{ width: '100%', height: '100%' }}
           data={dataMapping}
-          onHover={(e: any) => {
-            // selectYear(e.points[0].x)
-          }}
+          onRelayout={(e: PlotRelayoutEvent) =>
+            updateRange(
+              e['xaxis.range[0]'],
+              e['xaxis.range[1]'],
+              e['yaxis.range[0]'],
+              e['yaxis.range[1]']
+            )
+          }
           config={{
             showLink: false,
             showSendToCloud: false,
@@ -131,7 +171,12 @@ const HeatMap: React.FC<HeatMapProps> = ({ id, year }) => {
               b: 30,
               t: 60,
             },
-
+            yaxis: {
+              range: range ? [range.yAxisFrom, range.yAxisTo] : undefined,
+            },
+            xaxis: {
+              range: range ? [range.xAxisFrom, range.xAxisTo] : undefined,
+            },
             showlegend: false,
             font: { size: 9 },
             autosize: true,
