@@ -5,6 +5,7 @@ import BoxPlot from './components/BoxPlot/BoxPlot'
 import Header from './components/Header/Header'
 import HeatMap from './components/HeatMap/HeatMap'
 import LineChart from './components/LineChart/LineChart'
+import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner'
 import Scatterplot from './components/Scatterplot/Scatterplot'
 import { Range } from './types/Range'
 
@@ -15,12 +16,14 @@ function App() {
   )
   const [capacityData, setCapacityData] = useState<any>()
   const [tempData, setTempData] = useState<any>()
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     parseData()
   }, [])
 
   const parseData = () => {
+    setLoading(true)
     parse('data/ninja_pv_country_at.csv', {
       header: false,
       download: true,
@@ -44,6 +47,7 @@ function App() {
           return
         }
         setTempData(data.slice(3))
+        setLoading(false)
       },
     })
   }
@@ -51,44 +55,50 @@ function App() {
   return (
     <div className="App">
       <Header />
-      <main className="content">
-        <div className="content__top">
-          <LineChart
-            id="pv-daily"
-            year={year}
-            data={capacityData}
-            selection={yearChartsSelection}
-            updateSelection={setYearChartsSelection}
-          />
-          {/* <Scatterplot id="pv-daily" year={year} /> */}
-          <div className="content__top-right">
-            <HeatMap
-              id="pv-yearly"
-              data={tempData}
-              year={year}
-              selection={yearChartsSelection}
-              updateSelection={setYearChartsSelection}
-            />
-            <Scatterplot
-              tempData={tempData}
-              capacityData={capacityData}
+      {loading ? (
+        <main className="content">
+          <LoadingSpinner />
+        </main>
+      ) : (
+        <main className="content">
+          <div className="content__top">
+            <LineChart
               id="pv-daily"
               year={year}
+              data={capacityData}
               selection={yearChartsSelection}
               updateSelection={setYearChartsSelection}
             />
+            {/* <Scatterplot id="pv-daily" year={year} /> */}
+            <div className="content__top-right">
+              <HeatMap
+                id="pv-yearly"
+                data={tempData}
+                year={year}
+                selection={yearChartsSelection}
+                updateSelection={setYearChartsSelection}
+              />
+              <Scatterplot
+                tempData={tempData}
+                capacityData={capacityData}
+                id="pv-daily"
+                year={year}
+                selection={yearChartsSelection}
+                updateSelection={setYearChartsSelection}
+              />
+            </div>
           </div>
-        </div>
-        <div className="content__bottom">
-          {/* <BarChart id="pv-yearly" /> */}
-          <BoxPlot
-            data={capacityData}
-            id="pv-yearly"
-            selectYear={(year: number) => setYear(year)}
-            year={year}
-          />
-        </div>
-      </main>
+          <div className="content__bottom">
+            {/* <BarChart id="pv-yearly" /> */}
+            <BoxPlot
+              data={capacityData}
+              id="pv-yearly"
+              selectYear={(year: number) => setYear(year)}
+              year={year}
+            />
+          </div>
+        </main>
+      )}
       <footer className="footer">
         <div>Lena Ebner - WBIV Dashboard WS 2022</div>
         <div>
