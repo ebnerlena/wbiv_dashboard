@@ -52,48 +52,62 @@ const Scatterplot: React.FC<ScatterplotProps> = ({
   }, [tempData, capacityData])
 
   useEffect(() => {
-    if (selection != undefined && selection.xAxisFrom != undefined) {
-      const xRangeFrom = zData?.findIndex((data, i) => {
-        const dateSelection = new Date(selection.xAxisFrom || '')
-        const date = new Date(data)
-
-        if (
-          dateSelection.getDay() == date.getDay() &&
-          dateSelection.getMonth() == date.getMonth()
-        )
-          return i
-      })
-      const xRangeTo = zData?.findIndex((data, i) => {
-        const dateSelection = new Date(selection.xAxisTo || '')
-        const date = new Date(data)
-
-        if (
-          dateSelection.getDay() == date.getDay() &&
-          dateSelection.getMonth() == date.getMonth()
-        )
-          return i
-      })
-
-      if (
-        xRangeFrom != undefined &&
-        xRangeTo != undefined &&
-        xDataMax != undefined &&
-        xData
-      ) {
-        const newRange = {
-          xAxisFrom: xData[xRangeFrom],
-          xAxisTo: xDataMax[xRangeTo],
-          yAxisFrom: undefined,
-          yAxisTo: undefined,
-        } as Range
-        setRange(newRange)
-      }
+    if (!(selection != undefined && selection.xAxisFrom != undefined)) {
+      updateData()
+      return
     }
+
+    const dataIndizesInSelection = findPointsInSelection(selection)
+
+    if (!yTempData || !xData || !zData) return
+
+    const notSelectedYData = yTempData.filter(
+      (_, idx) => !dataIndizesInSelection.includes(idx)
+    )
+
+    const dataMappingYear = {
+      x: xData.filter((_, idx) => !dataIndizesInSelection.includes(idx)),
+      y: notSelectedYData,
+      type: 'scatter',
+      mode: 'markers',
+      marker: {
+        color: 'grey',
+
+        size: 5,
+      },
+      showlegend: false,
+      hovertemplate:
+        ' Capacity: %{x} <br>' + ' Temperature: %{y} ' + '<extra></extra>',
+    } as ScatterData
+
+    const selectedYData = yTempData.filter((_, idx) =>
+      dataIndizesInSelection.includes(idx)
+    )
+
+    const dataMappingYearSelected = {
+      x: xData.filter((_, idx) => dataIndizesInSelection.includes(idx)),
+      y: selectedYData,
+      type: 'scatter',
+      mode: 'markers',
+      marker: {
+        color: selectedYData,
+        colorscale: 'RdBu',
+        size: 7,
+      },
+      showlegend: false,
+      hovertemplate:
+        ' Capacity: %{x} <br>' + ' Temperature: %{y} ' + '<extra></extra>',
+    } as ScatterData
+
+    setDataMapping([dataMappingYear, dataMappingYearSelected])
   }, [selection])
 
   useEffect(() => {
-    if (!yTempData || !xData) return
+    updateData()
+  }, [yTempData])
 
+  const updateData = () => {
+    if (!yTempData || !xData) return
     const dataMappingYear = {
       x: xData,
       y: yTempData,
@@ -104,13 +118,27 @@ const Scatterplot: React.FC<ScatterplotProps> = ({
         colorscale: 'RdBu',
         size: 5,
       },
-      name: 'Temp',
+      showlegend: false,
       hovertemplate:
         ' Capacity: %{x} <br>' + ' Temperature: %{y} ' + '<extra></extra>',
     } as ScatterData
-
     setDataMapping([dataMappingYear])
-  }, [yTempData])
+  }
+
+  const findPointsInSelection = (selection: Range) => {
+    const dateSelectionFrom = new Date(selection.xAxisFrom || '')
+    const dateSelectionTo = new Date(selection.xAxisTo || '')
+
+    const dataIndizesInSelection: number[] = []
+    zData?.forEach((data, idx) => {
+      const date = new Date(data)
+
+      if (date >= dateSelectionFrom && date <= dateSelectionTo)
+        dataIndizesInSelection.push(idx)
+    })
+
+    return dataIndizesInSelection
+  }
 
   const updateYearData = (data: any) => {
     const myYear = year

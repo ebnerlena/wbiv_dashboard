@@ -93,7 +93,10 @@ function App() {
             <BoxPlot
               data={capacityData}
               id="pv-yearly"
-              selectYear={(year: number) => setYear(year)}
+              selectYear={(year: number) => {
+                setYear(year)
+                setYearChartsSelection(null)
+              }}
               year={year}
             />
           </div>
