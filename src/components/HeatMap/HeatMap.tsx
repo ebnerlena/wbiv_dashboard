@@ -1,4 +1,3 @@
-import { parse } from 'papaparse'
 import { PlotRelayoutEvent } from 'plotly.js'
 import React, { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
@@ -8,6 +7,7 @@ import './HeatMap.css'
 type HeatMapProps = {
   id: string
   year: number
+  data: any
   selection: Range | null
   updateSelection: (range: Range) => void
 }
@@ -40,16 +40,16 @@ var dataStart = [
 const HeatMap: React.FC<HeatMapProps> = ({
   id,
   year,
+  data,
   selection,
   updateSelection,
 }) => {
-  const [data, setData] = useState<any | null>(null)
   const [dataMapping, setDataMapping] = useState<any | null>(null)
   const [range, setRange] = useState<Range | null>(selection)
 
   useEffect(() => {
-    parseData()
-  }, [])
+    if (data && data != undefined) updateYearData(data)
+  }, [data])
 
   useEffect(() => {
     if (data && data != undefined) updateYearData(data)
@@ -59,23 +59,6 @@ const HeatMap: React.FC<HeatMapProps> = ({
     setRange(selection)
   }, [selection])
 
-  const parseData = () => {
-    parse('data/ninja_weather_country_at.csv', {
-      header: false,
-      download: true,
-      dynamicTyping: true,
-      complete: ({ data, errors }) => {
-        if (errors.length > 0) {
-          console.log('Error parsing pv csv data: ', errors)
-          return
-        }
-
-        setData(data)
-        updateYearData(data)
-      },
-    })
-  }
-
   const updateYearData = (data: any) => {
     const myYear = year
 
@@ -83,7 +66,7 @@ const HeatMap: React.FC<HeatMapProps> = ({
     let xData: string[] = []
     let i: number = 0
 
-    data.slice(3).forEach((entry: any) => {
+    data.forEach((entry: any) => {
       const curDate = new Date(entry[0])
       const curYear = curDate.getFullYear()
 

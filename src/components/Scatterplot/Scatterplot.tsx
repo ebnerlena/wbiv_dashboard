@@ -1,4 +1,3 @@
-import { parse } from 'papaparse'
 import { PlotRelayoutEvent, ScatterData } from 'plotly.js'
 import React, { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
@@ -8,14 +7,20 @@ import './Scatterplot.css'
 type ScatterplotProps = {
   id: string
   year: number
+  capacityData: any
+  tempData: any
   selection: Range | null
   updateSelection: (range: Range) => void
 }
 
-const Scatterplot: React.FC<ScatterplotProps> = ({ id, year, selection }) => {
+const Scatterplot: React.FC<ScatterplotProps> = ({
+  id,
+  year,
+  selection,
+  capacityData,
+  tempData,
+}) => {
   const [dataMapping, setDataMapping] = useState<ScatterData[]>([])
-  const [data, setData] = useState<any>()
-  const [tempData, setTempData] = useState<any>()
   const [xData, setXData] = useState<number[] | null>(null)
   const [xDataMax, setXDataMax] = useState<number[] | null>(null)
   const [zData, setZData] = useState<number[] | null>(null)
@@ -23,15 +28,28 @@ const Scatterplot: React.FC<ScatterplotProps> = ({ id, year, selection }) => {
   const [range, setRange] = useState<Range | null>(selection)
 
   useEffect(() => {
-    parseData()
-  }, [])
-
-  useEffect(() => {
-    if (data && data != undefined && tempData && tempData != undefined) {
-      updateYearData(data)
+    if (
+      capacityData &&
+      capacityData != undefined &&
+      tempData &&
+      tempData != undefined
+    ) {
+      updateYearData(capacityData)
       updateYearTempData(tempData)
     }
   }, [year])
+
+  useEffect(() => {
+    if (
+      capacityData &&
+      capacityData != undefined &&
+      tempData &&
+      tempData != undefined
+    ) {
+      updateYearData(capacityData)
+      updateYearTempData(tempData)
+    }
+  }, [tempData, capacityData])
 
   useEffect(() => {
     if (selection != undefined && selection.xAxisFrom != undefined) {
@@ -139,36 +157,6 @@ const Scatterplot: React.FC<ScatterplotProps> = ({ id, year, selection }) => {
     setXData(xDailyMaxForYear)
     setZData(xMaxDailyForYear)
     setXDataMax(xDailyMaxForYear)
-  }
-
-  const parseData = () => {
-    parse('data/ninja_pv_country_at.csv', {
-      header: false,
-      download: true,
-      dynamicTyping: true,
-      complete: ({ data, errors }) => {
-        if (errors.length > 0) {
-          console.log('Error parsing pv csv data: ', errors)
-          return
-        }
-        setData(data.slice(3))
-        updateYearData(data)
-      },
-    })
-
-    parse('data/ninja_weather_country_at.csv', {
-      header: false,
-      download: true,
-      dynamicTyping: true,
-      complete: ({ data, errors }) => {
-        if (errors.length > 0) {
-          console.log('Error parsing pv csv data: ', errors)
-          return
-        }
-        setTempData(data.slice(3))
-        updateYearTempData(data)
-      },
-    })
   }
 
   const updateYearTempData = (data: any) => {

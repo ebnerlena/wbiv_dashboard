@@ -1,4 +1,3 @@
-import { parse } from 'papaparse'
 import { PlotData, PlotRelayoutEvent } from 'plotly.js'
 import React, { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
@@ -8,6 +7,7 @@ import './LineChart.css'
 type LineChartProps = {
   id: string
   year: number
+  data: any
   selection: Range | null
   updateSelection: (range: Range) => void
 }
@@ -15,32 +15,18 @@ type LineChartProps = {
 const LineChart: React.FC<LineChartProps> = ({
   id,
   year,
+  data,
   selection,
   updateSelection,
 }) => {
   const [dataMapping, setDataMapping] = useState<PlotData[]>([])
-  const [data, setData] = useState<any>()
   const [range, setRange] = useState<Range | null>(selection)
 
   useEffect(() => {
-    parseData()
-  }, [])
-
-  const parseData = () => {
-    parse('data/ninja_pv_country_at.csv', {
-      header: false,
-      download: true,
-      dynamicTyping: true,
-      complete: ({ data, errors }) => {
-        if (errors.length > 0) {
-          console.log('Error parsing pv csv data: ', errors)
-          return
-        }
-        setData(data.slice(3))
-        updateYearData(data)
-      },
-    })
-  }
+    if (data && data != undefined) {
+      updateYearData(data)
+    }
+  }, [data])
 
   useEffect(() => {
     if (data && data != undefined) {

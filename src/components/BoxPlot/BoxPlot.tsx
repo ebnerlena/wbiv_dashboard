@@ -1,4 +1,4 @@
-import { parse } from 'papaparse'
+import { PlotData } from 'plotly.js'
 import { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
 import './BoxPlot.css'
@@ -6,6 +6,7 @@ import './BoxPlot.css'
 type BoxPlotProps = {
   id: string
   year: number
+  data: any
   selectYear: (year: number) => void
 }
 
@@ -14,11 +15,11 @@ export type DataMapping = {
   y: number[]
 }
 
-const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year }) => {
-  const [data, setData] = useState<any[] | null>(null)
+const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
+  const [dataMapping, setDataMapping] = useState<PlotData[] | null>(null)
 
   useEffect(() => {
-    if (!data) return
+    if (!data || data != undefined) return
 
     const newData = data
     newData.map((entry: any, idx: number) => {
@@ -30,69 +31,63 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year }) => {
         return entry
       }
     })
-    setData(newData)
+    setDataMapping(newData)
   }, [year])
 
   useEffect(() => {
-    parse('data/ninja_pv_country_at.csv', {
-      header: false,
-      download: true,
-      dynamicTyping: true,
-      complete: ({ data, errors }) => {
-        if (errors.length > 0) {
-          console.log('Error parsing pv csv data: ', errors)
-          return
+    if (data || data != undefined) {
+      updateData()
+    }
+  }, [data])
+
+  const updateData = () => {
+    const traces: any[] = []
+    let lastYear = 0
+    const years: number[] = []
+    let yData: number[] = []
+
+    data.forEach((entry: any, i: number) => {
+      const curDate = new Date(entry[0])
+      const curYear = curDate.getFullYear()
+      let lastYData = []
+      if (curYear > lastYear) {
+        lastYData = yData
+        yData = []
+        yData.push(entry[1])
+
+        years.push(curYear) // save all years in array for y data
+        lastYear = curYear
+
+        if (years.length == 1) return
+
+        var trace = {
+          y: lastYData.filter(d => d != 0),
+          x: curYear,
+          name: curYear,
+          marker: { color: year == curYear ? '#0377bc' : '#ffc632' },
+          type: 'box',
         }
 
-        const traces: any[] = []
-        let lastYear = 0
-        const years: number[] = []
-        let yData: number[] = []
-
-        data.slice(3).forEach((entry: any, i: number) => {
-          const curDate = new Date(entry[0])
-          const curYear = curDate.getFullYear()
-          let lastYData = []
-          if (curYear > lastYear) {
-            lastYData = yData
-            yData = []
-            yData.push(entry[1])
-
-            years.push(curYear) // save all years in array for y data
-            lastYear = curYear
-
-            if (years.length == 1) return
-
-            var trace = {
-              y: lastYData.filter(d => d != 0),
-              x: curYear,
-              name: curYear,
-              marker: { color: year == curYear ? '#0377bc' : '#ffc632' },
-              type: 'box',
-            }
-
-            traces.push(trace)
-          } else if (lastYear == 2019) {
-            lastYear = 2020
-          } else {
-            yData.push(entry[1])
-          }
-        })
-
-        setData(traces)
-      },
+        traces.push(trace)
+      } else if (lastYear == 2019) {
+        lastYear = 2020
+      } else {
+        yData.push(entry[1])
+      }
     })
-  }, [])
+
+    setDataMapping(traces)
+  }
 
   return (
     <div className="boxplot">
-      {data && (
+      {dataMapping && (
         <Plot
           divId={`boxplot-${id}`}
           className="boxplot__plot"
           useResizeHandler={true}
           // style={{ width: '100%', height: '100%' }}
-          data={data}
+          data={dataMapping}
           onClick={(e: any) => {
             selectYear(e.points[0].x)
           }}
