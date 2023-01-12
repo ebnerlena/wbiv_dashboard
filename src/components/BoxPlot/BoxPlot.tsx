@@ -1,4 +1,3 @@
-import { PlotData } from 'plotly.js'
 import { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
 import './BoxPlot.css'
@@ -16,13 +15,14 @@ export type DataMapping = {
 }
 
 const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
-  const [dataMapping, setDataMapping] = useState<PlotData[] | null>(null)
+  const [dataMapping, setDataMapping] = useState<any[] | null>(null)
 
-  useEffect(() => {
-    if (!data || data != undefined) return
+  const updateYear = (year: number) => {
+    if (!dataMapping && dataMapping != undefined) return
+    selectYear(year)
 
-    const newData = data
-    newData.map((entry: any, idx: number) => {
+    const newData = dataMapping
+    newData?.map((entry: any, idx: number) => {
       if (Math.abs(1980 - year) - 1 == idx) {
         entry.marker.color = '#0377bc' // '#303030'
         return entry
@@ -32,10 +32,10 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
       }
     })
     setDataMapping(newData)
-  }, [year])
+  }
 
   useEffect(() => {
-    if (data || data != undefined) {
+    if (data && data != undefined) {
       updateData()
     }
   }, [data])
@@ -89,7 +89,8 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
           // style={{ width: '100%', height: '100%' }}
           data={dataMapping}
           onClick={(e: any) => {
-            selectYear(e.points[0].x)
+            console.log('selectYear')
+            updateYear(e.points[0].x)
           }}
           config={{
             showLink: false,
