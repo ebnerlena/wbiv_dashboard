@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Plot from 'react-plotly.js'
+import { START_YEAR, YEAR_OFFSET } from '../../constants'
 import './BoxPlot.css'
 
 type BoxPlotProps = {
@@ -23,7 +24,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
 
     const newData = dataMapping
     newData?.map((entry: any, idx: number) => {
-      if (Math.abs(1980 - year) - 1 == idx) {
+      if (Math.abs(START_YEAR + YEAR_OFFSET - year) - 1 == idx) {
         entry.marker.color = '#0377bc' // '#303030'
         return entry
       } else {

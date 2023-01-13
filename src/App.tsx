@@ -7,10 +7,16 @@ import HeatMap from './components/HeatMap/HeatMap'
 import LineChart from './components/LineChart/LineChart'
 import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner'
 import Scatterplot from './components/Scatterplot/Scatterplot'
+import {
+  HEADER_ROWS,
+  START_YEAR,
+  YEAR_DATA_ROWS,
+  YEAR_OFFSET,
+} from './constants'
 import { Range } from './types/Range'
 
-function App() {
-  const [year, setYear] = useState<number>(2019)
+const App = () => {
+  const [year, setYear] = useState<number>(START_YEAR)
   const [yearChartsSelection, setYearChartsSelection] = useState<Range | null>(
     null
   )
@@ -33,7 +39,7 @@ function App() {
           console.log('Error parsing pv csv data: ', errors)
           return
         }
-        setCapacityData(data.slice(3))
+        setCapacityData(data.slice(HEADER_ROWS + YEAR_OFFSET * YEAR_DATA_ROWS))
       },
     })
 
@@ -46,7 +52,7 @@ function App() {
           console.log('Error parsing pv csv data: ', errors)
           return
         }
-        setTempData(data.slice(3))
+        setTempData(data.slice(HEADER_ROWS + YEAR_OFFSET * YEAR_DATA_ROWS))
         setLoading(false)
       },
     })
