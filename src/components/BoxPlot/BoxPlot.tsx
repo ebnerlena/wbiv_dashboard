@@ -89,7 +89,6 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
           // style={{ width: '100%', height: '100%' }}
           data={dataMapping}
           onClick={(e: any) => {
-            console.log('selectYear')
             updateYear(e.points[0].x)
           }}
           config={{

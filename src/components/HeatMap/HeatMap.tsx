@@ -124,14 +124,15 @@ const HeatMap: React.FC<HeatMapProps> = ({
           useResizeHandler={true}
           // style={{ width: '100%', height: '100%' }}
           data={dataMapping}
-          onRelayout={(e: PlotRelayoutEvent) =>
+          onRelayout={(e: PlotRelayoutEvent) => {
+            if (e['dragmode']) return
             updateRange(
               e['xaxis.range[0]'],
               e['xaxis.range[1]'],
               e['yaxis.range[0]'],
               e['yaxis.range[1]']
             )
-          }
+          }}
           config={{
             showLink: false,
             showSendToCloud: false,
