@@ -13,6 +13,21 @@ type ScatterplotProps = {
   updateSelection: (range: Range) => void
 }
 
+const dataMappingDefault = {
+  x: [0],
+  y: [0],
+  type: 'scatter',
+  mode: 'markers',
+  marker: {
+    colorscale: 'RdBu',
+    color: [0],
+    size: 5,
+  },
+  showlegend: false,
+  hovertemplate:
+    ' Capacity: %{x}% <br>' + ' Temperature: %{y:.1f}°C ' + '<extra></extra>',
+} as ScatterData
+
 const Scatterplot: React.FC<ScatterplotProps> = ({
   id,
   year,
@@ -67,18 +82,13 @@ const Scatterplot: React.FC<ScatterplotProps> = ({
     )
 
     const dataMappingYear = {
+      ...dataMappingDefault,
       x: xData.filter((_, idx) => !dataIndizesInSelection.includes(idx)),
       y: notSelectedYData,
-      type: 'scatter',
-      mode: 'markers',
       marker: {
         color: 'grey',
-
         size: 5,
       },
-      showlegend: false,
-      hovertemplate:
-        ' Capacity: %{x} <br>' + ' Temperature: %{y} ' + '<extra></extra>',
     } as ScatterData
 
     const selectedYData = yTempData.filter((_, idx) =>
@@ -86,18 +96,14 @@ const Scatterplot: React.FC<ScatterplotProps> = ({
     )
 
     const dataMappingYearSelected = {
+      ...dataMappingDefault,
       x: xData.filter((_, idx) => dataIndizesInSelection.includes(idx)),
       y: selectedYData,
-      type: 'scatter',
-      mode: 'markers',
       marker: {
         color: selectedYData,
         colorscale: 'RdBu',
         size: 7,
       },
-      showlegend: false,
-      hovertemplate:
-        ' Capacity: %{x} <br>' + ' Temperature: %{y} ' + '<extra></extra>',
     } as ScatterData
 
     setDataMapping([dataMappingYear, dataMappingYearSelected])
@@ -110,19 +116,15 @@ const Scatterplot: React.FC<ScatterplotProps> = ({
   const updateData = () => {
     if (!yTempData || !xData) return
     const dataMappingYear = {
+      ...dataMappingDefault,
       x: xData,
       y: yTempData,
-      type: 'scatter',
-      mode: 'markers',
       marker: {
+        ...dataMappingDefault.marker,
         color: yTempData,
-        colorscale: 'RdBu',
-        size: 5,
       },
-      showlegend: false,
-      hovertemplate:
-        ' Capacity: %{x} <br>' + ' Temperature: %{y} ' + '<extra></extra>',
     } as ScatterData
+
     setDataMapping([dataMappingYear])
   }
 
@@ -171,8 +173,8 @@ const Scatterplot: React.FC<ScatterplotProps> = ({
           const maxIndex = yDaily.findIndex(value => value == max)
 
           xMaxDailyForYear.push(xDaily[maxIndex])
-          xDailyMaxForYear.push(yDaily[maxIndex])
-          yDailyAvgForYear.push(dailyAvg / 24)
+          xDailyMaxForYear.push(yDaily[maxIndex] * 100)
+          yDailyAvgForYear.push((dailyAvg / 24) * 100)
           yDailyMedianForYear.push(xDaily.sort()[Math.round(xDaily.length / 2)]) // use median to ignore 0 outliers
 
           i = 0

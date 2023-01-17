@@ -10,11 +10,6 @@ type BoxPlotProps = {
   selectYear: (year: number) => void
 }
 
-export type DataMapping = {
-  x: number[]
-  y: number[]
-}
-
 const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
   const [dataMapping, setDataMapping] = useState<any[] | null>(null)
 
@@ -54,7 +49,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
       if (curYear > lastYear) {
         lastYData = yData
         yData = []
-        yData.push(entry[1])
+        yData.push(entry[1] * 100)
 
         years.push(curYear) // save all years in array for y data
         lastYear = curYear
@@ -73,7 +68,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
       } else if (lastYear == 2019) {
         lastYear = 2020
       } else {
-        yData.push(entry[1])
+        yData.push(entry[1] * 100)
       }
     })
 
@@ -104,7 +99,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
           }}
           layout={{
             title: {
-              text: 'Yearly PV Production Capacity w/ 0',
+              text: 'PV Production Capacity in % per Year',
             },
             margin: {
               l: 30,

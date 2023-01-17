@@ -74,8 +74,8 @@ const LineChart: React.FC<LineChartProps> = ({
           const maxIndex = yDaily.findIndex(value => value == max)
 
           xMaxDailyForYear.push(xDaily[maxIndex])
-          yDailyMaxForYear.push(yDaily[maxIndex])
-          yDailyAvgForYear.push(dailyAvg / 24)
+          yDailyMaxForYear.push(yDaily[maxIndex] * 100)
+          yDailyAvgForYear.push((dailyAvg / 24) * 100)
           yDailyMedianForYear.push(xDaily.sort()[Math.round(xDaily.length / 2)]) // use median to ignore 0 outliers
 
           i = 0
@@ -162,7 +162,7 @@ const LineChart: React.FC<LineChartProps> = ({
             font: { size: 9 },
             autosize: true,
             yaxis: {
-              title: 'Capacity',
+              title: 'Capacity in %',
               zeroline: false,
               range: range ? [range.yAxisFrom, range.yAxisTo] : undefined,
             },
