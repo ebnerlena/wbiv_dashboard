@@ -122,7 +122,6 @@ const HeatMap: React.FC<HeatMapProps> = ({
           divId={`heatmap-${id}`}
           className="heatmap__plot"
           useResizeHandler={true}
-          // style={{ width: '100%', height: '100%' }}
           data={dataMapping}
           onRelayout={(e: PlotRelayoutEvent) => {
             if (e['dragmode']) return
@@ -164,7 +163,6 @@ const HeatMap: React.FC<HeatMapProps> = ({
             showlegend: false,
             font: { size: 9 },
             autosize: true,
-            // height: 320,
           }}
         />
       )}

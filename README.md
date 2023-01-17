@@ -47,6 +47,8 @@ The solar capacity factor is the ratio of the actual power produced by a solar s
 
 The solar capacity factor of a particular system tells how often the system is running. The higher the value of the capacity factor, the better the performance of the system. The ideal value is 100% for any system. But in the real world, the solar capacity factor never exceeds 40%.
 
+- Resource: https://solarsena.com/solar-capacity-factor-states-power/
+
 ## Präsentation
 
 warum gehts in daten, welche insights, dashboard und interaktionen herzeigen

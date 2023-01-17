@@ -20,7 +20,7 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
     const newData = dataMapping
     newData?.map((entry: any, idx: number) => {
       if (Math.abs(START_YEAR + YEAR_OFFSET - year) - 1 == idx) {
-        entry.marker.color = '#0377bc' // '#303030'
+        entry.marker.color = '#0377bc'
         return entry
       } else {
         entry.marker.color = '#ffc632'
@@ -82,7 +82,6 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
           divId={`boxplot-${id}`}
           className="boxplot__plot"
           useResizeHandler={true}
-          // style={{ width: '100%', height: '100%' }}
           data={dataMapping}
           onClick={(e: any) => {
             updateYear(e.points[0].x)
@@ -110,7 +109,6 @@ const BoxPlot: React.FC<BoxPlotProps> = ({ id, selectYear, year, data }) => {
             showlegend: false,
             font: { size: 10 },
             autosize: true,
-            // height: 320,
           }}
         />
       )}

@@ -247,7 +247,6 @@ const Scatterplot: React.FC<ScatterplotProps> = ({
           divId={`scatterplot-${id}`}
           className="scatterplot__plot"
           useResizeHandler={true}
-          // style={{ width: '100%', height: '100%' }}
           onRelayout={(e: PlotRelayoutEvent) => {
             if (e['dragmode']) return
             updateRange(
@@ -272,7 +271,6 @@ const Scatterplot: React.FC<ScatterplotProps> = ({
             title: `Daily PV Production Capacity and Temperature: ${year}`,
             font: { size: 9 },
             autosize: true,
-            // height: 150,
             yaxis: {
               title: 'Avg Temperature',
               zeroline: false,
