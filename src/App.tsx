@@ -7,16 +7,11 @@ import HeatMap from './components/HeatMap/HeatMap'
 import LineChart from './components/LineChart/LineChart'
 import LoadingSpinner from './components/LoadingSpinner/LoadingSpinner'
 import Scatterplot from './components/Scatterplot/Scatterplot'
-import {
-  HEADER_ROWS,
-  START_YEAR,
-  YEAR_DATA_ROWS,
-  YEAR_OFFSET,
-} from './constants'
+import { END_YEAR, HEADER_ROWS, YEAR_DATA_ROWS, YEAR_OFFSET } from './constants'
 import { Range } from './types/Range'
 
 const App = () => {
-  const [year, setYear] = useState<number>(START_YEAR)
+  const [year, setYear] = useState<number>(END_YEAR)
   const [yearChartsSelection, setYearChartsSelection] = useState<Range | null>(
     null
   )
