@@ -7,16 +7,11 @@
 - `yarn build` → Build for production in /build dir
 - `yarn start:docker` → Build and run docker image
 
-## Requirements:
+## Deployment
 
-- Dashboard auf einem Screen ohne Scrollen und Zoomen (Full Browser Screen ausfüllen)
-- 3 unterschiedliche Visualisierungen z.b. Scatter, Barchart, ParallelCoordinaten, DonutChart, Heatmap
-- Layout egal: 2 oben 1 größer unten
-- Library egal
-- Backend egal
-- Interaction: innerhalb jedes Plots
-  - höchste Stufe wäre zwischen den Plots (Brushing und Linking)
-  - globaler Filter der alle Views updaten != brushing und linking
+Deployed on a aws S3 bucket.
+
+- http://wbiv-dashboard.s3-website.eu-central-1.amazonaws.com
 
 ## Data
 
@@ -48,6 +43,19 @@ The solar capacity factor is the ratio of the actual power produced by a solar s
 The solar capacity factor of a particular system tells how often the system is running. The higher the value of the capacity factor, the better the performance of the system. The ideal value is 100% for any system. But in the real world, the solar capacity factor never exceeds 40%.
 
 - Resource: https://solarsena.com/solar-capacity-factor-states-power/
+
+---
+
+## Requirements:
+
+- Dashboard auf einem Screen ohne Scrollen und Zoomen (Full Browser Screen ausfüllen)
+- 3 unterschiedliche Visualisierungen z.b. Scatter, Barchart, ParallelCoordinaten, DonutChart, Heatmap
+- Layout egal: 2 oben 1 größer unten
+- Library egal
+- Backend egal
+- Interaction: innerhalb jedes Plots
+  - höchste Stufe wäre zwischen den Plots (Brushing und Linking)
+  - globaler Filter der alle Views updaten != brushing und linking
 
 ## Präsentation
 
