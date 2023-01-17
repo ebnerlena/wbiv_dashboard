@@ -104,7 +104,7 @@ const App = () => {
         </main>
       )}
       <footer className="footer">
-        <div>Lena Ebner - WBIV Dashboard WS 2022</div>
+        <div>Lena Ebner - WBIV Dashboard WS 2022/23</div>
         <div>
           Data:
           <a href="https://renewables.ninja"> https://renewables.ninja</a>

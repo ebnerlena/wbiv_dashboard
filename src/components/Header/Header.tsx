@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { END_YEAR, START_YEAR, YEAR_OFFSET } from '../../constants'
 import { Weather } from '../../types/Weather'
 import './Header.css'
 
@@ -37,7 +38,11 @@ function Header() {
         <div className="header__text-wrapper">
           <h1 className="header__title">Solar Engery</h1>
           <p className="header__subtitle">
-            PV Energy Production Capacity in Austria 1980 - 2019
+            {`PV Energy Production`}{' '}
+            <span title="The solar capacity factor is the ratio of the actual power produced by a solar system in a particular period of time to the maximum possible power that can be produced by the system. As it is a ratio of the same quantities, it is unitless and expressed in percentages. The typical values of the solar capacity factor are between 10% and 25%. For the solar utility power plant, solar capacity is around 24.5%. The solar capacity factor of a particular system tells how often the system is running. The higher the value of the capacity factor, the better the performance of the system. The ideal value is 100% for any system. But in the real world, the solar capacity factor never exceeds 40%.">
+              Capacity
+            </span>
+            {` in Austria ${START_YEAR + YEAR_OFFSET} - ${END_YEAR}`}
           </p>
         </div>
       </div>
