@@ -70,36 +70,7 @@ zsert aus user sciht dann kurz code
 
 ## 7 Stages
 
-Folien Block 4 - 3
-
-### Define a Clear Purpose
-
-was für dashboard möcht ich machen? , welche Daten möchte ich verwenden?, in welche Richtung?
-Hourly PV Daten von Österreich von 1980 - 2019 darstellen
-
-### Know Your Audience
-
-wer ist meine Zielgruppe? Experten? General Public - jeder
-Experten
-
-Static operational?
-
-### Keep Visualizations Simple
-
-- LineChart: um Jahresverlauf zu sehen
-- BoxPlot: for statistical overview about data distribution per year
-- HeatMap: zur Temperatur Darstellung über den Tag pro Jahr
-
-### Choose the Right Visual
-
-### Make Sure Your Visualisations are Inclusive
-
-- Each plot has a hover interaction
-- The linechart and heatmap get updated on the year selected in the boxplot chart
-
-### Provide Context
-
-### Make It Actionable
+[Abschlussbericht](./Abschlussbericht_WBIV_Dashboard_Ebner.pdf)
 
 ## References
 
